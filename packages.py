@@ -16,6 +16,8 @@ import sip
 
 
 # importing the required module 
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt 
     
 # x axis values 
