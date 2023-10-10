@@ -22,4 +22,4 @@ dot(
         drv.Out(result), drv.In(a), drv.In(b),
         block=(5,1,1))
 
-print result
+print (result)
