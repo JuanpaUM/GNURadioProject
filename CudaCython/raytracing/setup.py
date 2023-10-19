@@ -3,7 +3,8 @@ from os.path import join as pjoin
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
-from icecream import ic
+#from icecream import ic
+import numpy as np
 
 
 def find_in_path(name, path):
@@ -52,13 +53,13 @@ def locate_cuda():
 
 
 CUDA = locate_cuda()
-ic(CUDA)
+#ic(CUDA)
 
 ext = Extension('cudaext',
                 sources=['wrapper.pyx'],
                 libraries=['lib/kernel', 'cudart'],
                 language='c++',
-                include_dirs=[CUDA['include']],
+                include_dirs=[CUDA['include'], np.get_include()],
                 library_dirs=[CUDA['lib64']],
                 extra_compile_args=['/openmp']
                 )
