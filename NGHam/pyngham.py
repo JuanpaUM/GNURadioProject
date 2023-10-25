@@ -1,8 +1,3 @@
-
-
-
-
-
 from enum import Enum
 from crc import Calculator, Configuration
 from rs import RS
