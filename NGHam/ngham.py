@@ -24,7 +24,7 @@ import ngham_epy_block_0 as epy_block_0  # embedded python block
 class ngham(gr.top_block):
 
     def __init__(self):
-        gr.top_block.__init__(self, "Not titled yet", catch_exceptions=True)
+        gr.top_block.__init__(self, "Not titled yet")
 
         ##################################################
         # Variables
