@@ -17,7 +17,6 @@ from rs import RS
 from enum import Enum
 from crc import Calculator, Configuration
 from pyngham import PyNGHam
-import time
 import cProfile
 import pstats
 
@@ -48,7 +47,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                 for msg in f:
                     """ print("-------------Original Message-----------")
                     print(msg) """
-                    start_time = time.time()
+                    #start_time = time.time()
 
                     msg1=msg[0:220]
                     msg2=msg[220:]
@@ -86,7 +85,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                     elapsed_time = end_time - start_time
                     print("Elapsed time: ", elapsed_time)  
                     print("---------------------------------------------") """
-        
         results = pstats.Stats(profile)
         results.sort_stats(pstats.SortKey.TIME)
         results.print_stats()

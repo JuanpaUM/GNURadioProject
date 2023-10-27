@@ -129,6 +129,13 @@ class PyNGHam:
         self._rsc.append(RS(8, 0x187, 112, 11, 32, _PYNGHAM_PL_PAR_SIZES[-1] - _PYNGHAM_PL_PAR_SIZES[5]))
         self._rsc.append(RS(8, 0x187, 112, 11, 32, _PYNGHAM_PL_PAR_SIZES[-1] - _PYNGHAM_PL_PAR_SIZES[6]))
 
+        poly_np = np.array(_PYNGHAM_CCSDS_POLY, dtype=np.uint8)
+        self.poly_gpu = cuda.mem_alloc(poly_np.nbytes)
+        cuda.memcpy_htod(self.poly_gpu, poly_np)
+        
+        self.pkt = np.zeros(266, dtype=np.uint8)
+        self.pkt_gpu = cuda.mem_alloc(self.pkt.nbytes)
+
     def __str__(self):
         """
         Represents the class as a string.
@@ -171,15 +178,11 @@ class PyNGHam:
     
     def scramble_packet(self, pkt, codeword_start, size_nr):
 
-        # Convierte pkt y _PYNGHAM_CCSDS_POLY en arreglos NumPy
+        # Convierte pkt en arreglo de NumPy
         pkt_np = np.array(pkt, dtype=np.uint8)
-        poly_np = np.array(_PYNGHAM_CCSDS_POLY, dtype=np.uint8)
 
         # Copia los arreglos a la GPU
-        pkt_gpu = cuda.mem_alloc(pkt_np.nbytes)
-        poly_gpu = cuda.mem_alloc(poly_np.nbytes)
-        cuda.memcpy_htod(pkt_gpu, pkt_np)
-        cuda.memcpy_htod(poly_gpu, poly_np)
+        cuda.memcpy_htod(self.pkt_gpu, pkt_np)
 
         # Obtiene el valor de _PYNGHAM_PL_PAR_SIZES
         pl_par_sizes = _PYNGHAM_PL_PAR_SIZES[size_nr]
@@ -189,10 +192,10 @@ class PyNGHam:
         grid_size = (pl_par_sizes + block_size - 1) // block_size
 
         # Llama al kernel CUDA
-        scramble_kernel(pkt_gpu, np.int32(codeword_start), np.int32(size_nr), poly_gpu, np.int32(pl_par_sizes), block=(block_size, 1, 1))
+        scramble_kernel(self.pkt_gpu, np.int32(codeword_start), np.int32(size_nr), self.poly_gpu, np.int32(pl_par_sizes), block=(block_size, 1, 1))
 
         # Copia los resultados de vuelta a la CPU
-        cuda.memcpy_dtoh(pkt_np, pkt_gpu)
+        cuda.memcpy_dtoh(pkt_np, self.pkt_gpu)
 
         # Actualiza pkt con los resultados
         pkt = list(pkt_np)
@@ -258,7 +261,6 @@ class PyNGHam:
         # # Scramble
         # for i in range(_PYNGHAM_PL_PAR_SIZES[size_nr]):
         #     pkt[codeword_start+i] = pkt[codeword_start+i] ^ _PYNGHAM_CCSDS_POLY[i]
-
         pkt = self.scramble_packet(pkt, codeword_start, size_nr)
         
         return pkt
