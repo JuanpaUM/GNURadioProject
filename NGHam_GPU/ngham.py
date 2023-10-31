@@ -61,10 +61,10 @@ def main(top_block_cls=ngham, options=None):
 
     tb.start()
 
-    try:
+    """ try:
         input('Press Enter to quit: ')
     except EOFError:
-        pass
+        pass """
     tb.stop()
     tb.wait()
 

@@ -19,6 +19,14 @@ from crc import Calculator, Configuration
 from pyngham import PyNGHam
 import cProfile
 import pstats
+from datetime import datetime
+
+# Obtén la fecha y hora actual
+now = datetime.now()
+fecha_hora = now.strftime("%Y%m%d_%H%M%S")
+
+# Crea el nombre del archivo con la fecha y hora
+nombre_archivo = f"NGHAM_Results_{fecha_hora}.txt"
 
 x = PyNGHam()
 
@@ -82,8 +90,19 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                     print("Elapsed time: ", elapsed_time)  
                     print("---------------------------------------------") """
         
-        results = pstats.Stats(profile)
+        """ results = pstats.Stats(profile)
         results.sort_stats(pstats.SortKey.TIME)
-        results.print_stats()
+        results.print_stats() """
 
+        profile.disable()
+
+        with open(nombre_archivo, 'w') as f:
+            # Redirige la salida al archivo
+            stats = pstats.Stats(profile, stream=f)
+            stats.sort_stats(pstats.SortKey.TIME)
+            stats.print_stats()
+
+        # Cierra el archivo
+        f.close()
+        print(f"Se ha creado el archivo {nombre_archivo}")
 

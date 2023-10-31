@@ -1,0 +1,51 @@
+         52756446 function calls (52752366 primitive calls) in 22.510 seconds
+
+   Ordered by: internal time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     2040    5.752    0.003    8.619    0.004 /home/jpv/proy/ProyGit/GNURadioProject/NGHam/rs.py:148(encode)
+   422620    3.385    0.000    9.681    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:277(_process_byte)
+  6794560    2.854    0.000    3.957    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:57(__getitem__)
+ 14888940    2.769    0.000    2.769    0.000 /home/jpv/proy/ProyGit/GNURadioProject/NGHam/rs.py:134(_modnn)
+  7221260    1.171    0.000    1.171    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:68(value)
+   426700    1.168    0.000    3.284    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:76(reversed)
+  3380960    1.085    0.000    1.535    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:255(_is_division_possible)
+  7615320    1.001    0.000    1.001    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:258(register)
+  3803580    0.927    0.000    2.928    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:63(<genexpr>)
+  3807660    0.683    0.000    0.683    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:262(register)
+     2040    0.407    0.000   13.635    0.007 /home/jpv/.local/lib/python3.10/site-packages/crc.py:213(update)
+   422620    0.264    0.000    0.421    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:62(__iter__)
+   853400    0.222    0.000    0.222    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:30(__init__)
+   424660    0.181    0.000    0.294    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:217(<genexpr>)
+   426700    0.115    0.000    0.183    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:65(__int__)
+   451180    0.109    0.000    0.159    0.000 {built-in method builtins.len}
+   849320    0.103    0.000    0.103    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:54(__len__)
+     2040    0.087    0.000    0.087    0.000 /home/jpv/proy/ProyGit/GNURadioProject/NGHam/pyngham.py:151(scramble_packet)
+   454920    0.066    0.000    0.066    0.000 {method 'pop' of 'list' objects}
+     2040    0.054    0.000   22.510    0.011 /home/jpv/proy/ProyGit/GNURadioProject/NGHam/pyngham.py:159(encode)
+   454920    0.032    0.000    0.032    0.000 {method 'append' of 'list' objects}
+     2040    0.009    0.000    0.051    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:244(reverse)
+     2040    0.009    0.000   13.724    0.007 /home/jpv/.local/lib/python3.10/site-packages/crc.py:370(checksum)
+     2040    0.008    0.000    0.008    0.000 <string>:2(__init__)
+12240/8160    0.007    0.000    0.023    0.000 {built-in method builtins.isinstance}
+     2040    0.007    0.000    0.009    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:168(__init__)
+     4080    0.006    0.000    0.007    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:189(__getitem__)
+     2040    0.005    0.000    0.006    0.000 {built-in method _abc._abc_subclasscheck}
+     2040    0.005    0.000    0.014    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:352(__init__)
+     2040    0.004    0.000    0.017    0.000 /usr/lib/python3.10/typing.py:993(__instancecheck__)
+     2040    0.003    0.000    0.055    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:236(digest)
+     2040    0.003    0.000    0.013    0.000 /usr/lib/python3.10/typing.py:1154(__subclasscheck__)
+     4080    0.003    0.000    0.022    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:405(_bytes_generator)
+     2040    0.002    0.000    0.003    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:207(init)
+     2040    0.002    0.000    0.009    0.000 {built-in method builtins.issubclass}
+     2040    0.001    0.000    0.007    0.000 /usr/lib/python3.10/abc.py:121(__subclasscheck__)
+     2040    0.001    0.000    0.001    0.000 /usr/lib/python3.10/_collections_abc.py:315(__subclasshook__)
+     2040    0.001    0.000    0.001    0.000 /home/jpv/.local/lib/python3.10/site-packages/crc.py:182(__len__)
+        1    0.000    0.000    0.000    0.000 {built-in method io.open}
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method posix.getcwd}
+        1    0.000    0.000    0.000    0.000 /usr/lib/python3.10/cProfile.py:118(__exit__)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+
+
