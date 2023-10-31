@@ -7,7 +7,7 @@ be the parameters. All of them are required to have default values!
 """
 
 import sys
-sys.path.append('/home/jpv/proy/GNUradio/NGHam')
+sys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam')
 
 import numpy as np
 from gnuradio import gr
@@ -19,7 +19,6 @@ from crc import Calculator, Configuration
 from pyngham import PyNGHam
 import cProfile
 import pstats
-
 
 x = PyNGHam()
 
@@ -56,32 +55,35 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
                     print(pkt1)
                     #pkt[30] = 5
                     print("-------------Chunk 2 Encoded msg-----------")
-                    print(pkt1)
+                    print(pkt1) """
 
-                    print("-------------Chunk 1 Decoded msg-----------")
-                    decoded_data1, errors1, errors_pos1 = x.decode(pkt1)
+                    #print("-------------Chunk 1 Decoded msg-----------")
+                    #decoded_data1, errors1, errors_pos1 = x.decode(pkt1)
 
-                    print("Decoded data:", decoded_data1)
+                    """ print("Decoded data:", decoded_data1)
                     print("Number of errors:", errors1)
-                    print("Errors positions:", errors_pos1)
+                    print("Errors positions:", errors_pos1) """
 
-                    print("-------------Chunk 2 Decoded msg-----------")
-                    decoded_data2, errors2, errors_pos2 = x.decode(pkt2)
+                    #print("-------------Chunk 2 Decoded msg-----------")
+                    #decoded_data2, errors2, errors_pos2 = x.decode(pkt2)
 
-                    print("Decoded data:", decoded_data2)
+                    """ print("Decoded data:", decoded_data2)
                     print("Number of errors:", errors2)
-                    print("Errors positions:", errors_pos2)
+                    print("Errors positions:", errors_pos2) """
 
-                    print("-------------Get Original Message-----------")
+                    """ print("-------------Get Original Message-----------")
                     byte_list = decoded_data1 + decoded_data2
                     # Paso 2: Convertir la lista de enteros en una cadena de caracteres
                     original_message = ''.join([chr(byte) for byte in byte_list])
                     # Imprimir el mensaje original
-                    print(original_message) """
+                    print(original_message)  """
                     """ print("-----------Codification Time-----------------")
                     elapsed_time = end_time - start_time
                     print("Elapsed time: ", elapsed_time)  
                     print("---------------------------------------------") """
+        
         results = pstats.Stats(profile)
         results.sort_stats(pstats.SortKey.TIME)
         results.print_stats()
+
+

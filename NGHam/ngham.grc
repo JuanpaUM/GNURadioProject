@@ -51,42 +51,48 @@ blocks:
     _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
       \ GRC will instantiate the first class it finds\nto get ports and parameters\
       \ of your block. The arguments to __init__  will\nbe the parameters. All of\
-      \ them are required to have default values!\n\"\"\"\n\nimport sys\nsys.path.append('/home/jpv/proy/GNUradio/NGHam')\n\
+      \ them are required to have default values!\n\"\"\"\n\nimport sys\nsys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam')\n\
       \nimport numpy as np\nfrom gnuradio import gr\nimport os\nfrom enum import Enum\n\
       from rs import RS\nfrom enum import Enum\nfrom crc import Calculator, Configuration\n\
-      from pyngham import PyNGHam\nimport time\nx = PyNGHam()\n\nclass blk(gr.sync_block):\
-      \  # other base classes are basic_block, decim_block, interp_block\n    \"\"\
-      \"Embedded Python Block example - a simple multiply const\"\"\"\n\n    def __init__(self):\
-      \  # only default arguments here\n        \"\"\"arguments to this function show\
-      \ up as parameters in GRC\"\"\"\n        gr.sync_block.__init__(\n         \
-      \   self,\n            name='NGHam',   # will show up in GRC\n            in_sig=None,\n\
-      \            out_sig=None\n        )\n        self.handle_msg()\n\n    def handle_msg(self):\n\
-      \n        path=os.getcwd()+\"/20180512_231422z_436500000_43468_packets.log\"\
-      \n        print(path)\n        with open(path, \"rb\") as f:\n            for\
-      \ msg in f:\n                print(\"-------------Original Message-----------\"\
-      )\n                print(msg)\n                start_time = time.time()\n\n\
-      \                msg1=msg[0:220]\n                msg2=msg[220:]\n\n       \
-      \         pkt1 = x.encode(msg1)\n                pkt2 = x.encode(msg2)\n   \
-      \             end_time = time.time()\n                print(\"-------------Chunk\
-      \ 1 Encoded msg-----------\")\n                print(pkt1)\n               \
-      \ #pkt[30] = 5\n                print(\"-------------Chunk 2 Encoded msg-----------\"\
-      )\n                print(pkt1)\n\n                print(\"-------------Chunk\
-      \ 1 Decoded msg-----------\")\n                decoded_data1, errors1, errors_pos1\
-      \ = x.decode(pkt1)\n\n                print(\"Decoded data:\", decoded_data1)\n\
-      \                print(\"Number of errors:\", errors1)\n                print(\"\
-      Errors positions:\", errors_pos1)\n\n                print(\"-------------Chunk\
-      \ 2 Decoded msg-----------\")\n                decoded_data2, errors2, errors_pos2\
-      \ = x.decode(pkt2)\n\n                print(\"Decoded data:\", decoded_data2)\n\
-      \                print(\"Number of errors:\", errors2)\n                print(\"\
-      Errors positions:\", errors_pos2)\n\n                print(\"-------------Get\
-      \ Original Message-----------\")\n                byte_list = decoded_data1\
-      \ + decoded_data2\n                # Paso 2: Convertir la lista de enteros en\
-      \ una cadena de caracteres\n                original_message = ''.join([chr(byte)\
-      \ for byte in byte_list])\n                # Imprimir el mensaje original\n\
-      \                print(original_message)\n                print(\"-----------Codification\
-      \ Time-----------------\")\n                elapsed_time = end_time - start_time\n\
-      \                print(\"Elapsed time: \", elapsed_time)  \n               \
-      \ print(\"---------------------------------------------\") \n\n\n"
+      from pyngham import PyNGHam\nimport cProfile\nimport pstats\n\nx = PyNGHam()\n\
+      \nclass blk(gr.sync_block):  # other base classes are basic_block, decim_block,\
+      \ interp_block\n    \"\"\"Embedded Python Block example - a simple multiply\
+      \ const\"\"\"\n\n    def __init__(self):  # only default arguments here\n  \
+      \      \"\"\"arguments to this function show up as parameters in GRC\"\"\"\n\
+      \        gr.sync_block.__init__(\n            self,\n            name='NGHam',\
+      \   # will show up in GRC\n            in_sig=None,\n            out_sig=None\n\
+      \        )\n        self.handle_msg()\n\n    def handle_msg(self):\n       \
+      \ with cProfile.Profile() as profile:\n            path=os.getcwd()+\"/20180512_231422z_436500000_43468_packets.log\"\
+      \n            print(path)\n            with open(path, \"rb\") as f:\n     \
+      \           for msg in f:\n                    \"\"\" print(\"-------------Original\
+      \ Message-----------\")\n                    print(msg) \"\"\"\n           \
+      \         #start_time = time.time()\n\n                    msg1=msg[0:220]\n\
+      \                    msg2=msg[220:]\n\n                    pkt1 = x.encode(msg1)\n\
+      \                    pkt2 = x.encode(msg2)\n                    #end_time =\
+      \ time.time()\n                    \"\"\" print(\"-------------Chunk 1 Encoded\
+      \ msg-----------\")\n                    print(pkt1)\n                    #pkt[30]\
+      \ = 5\n                    print(\"-------------Chunk 2 Encoded msg-----------\"\
+      )\n                    print(pkt1) \"\"\"\n\n                    #print(\"-------------Chunk\
+      \ 1 Decoded msg-----------\")\n                    #decoded_data1, errors1,\
+      \ errors_pos1 = x.decode(pkt1)\n\n                    \"\"\" print(\"Decoded\
+      \ data:\", decoded_data1)\n                    print(\"Number of errors:\",\
+      \ errors1)\n                    print(\"Errors positions:\", errors_pos1) \"\
+      \"\"\n\n                    #print(\"-------------Chunk 2 Decoded msg-----------\"\
+      )\n                    #decoded_data2, errors2, errors_pos2 = x.decode(pkt2)\n\
+      \n                    \"\"\" print(\"Decoded data:\", decoded_data2)\n     \
+      \               print(\"Number of errors:\", errors2)\n                    print(\"\
+      Errors positions:\", errors_pos2) \"\"\"\n\n                    \"\"\" print(\"\
+      -------------Get Original Message-----------\")\n                    byte_list\
+      \ = decoded_data1 + decoded_data2\n                    # Paso 2: Convertir la\
+      \ lista de enteros en una cadena de caracteres\n                    original_message\
+      \ = ''.join([chr(byte) for byte in byte_list])\n                    # Imprimir\
+      \ el mensaje original\n                    print(original_message)  \"\"\"\n\
+      \                    \"\"\" print(\"-----------Codification Time-----------------\"\
+      )\n                    elapsed_time = end_time - start_time\n              \
+      \      print(\"Elapsed time: \", elapsed_time)  \n                    print(\"\
+      ---------------------------------------------\") \"\"\"\n        \n        results\
+      \ = pstats.Stats(profile)\n        results.sort_stats(pstats.SortKey.TIME)\n\
+      \        results.print_stats()\n\n\n"
     affinity: ''
     alias: ''
     comment: ''
@@ -98,7 +104,7 @@ blocks:
     bus_sink: false
     bus_source: false
     bus_structure: null
-    coordinate: [456, 140.0]
+    coordinate: [496, 140.0]
     rotation: 0
     state: true
 connections: []

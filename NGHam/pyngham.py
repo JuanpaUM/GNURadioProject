@@ -147,6 +147,14 @@ class PyNGHam:
             diff = diff >> 1
 
         return True
+    
+    def scramble_packet(self, pkt, codeword_start, size_nr):
+        # Scramble
+
+        for i in range(_PYNGHAM_PL_PAR_SIZES[size_nr]):
+            pkt[codeword_start+i] = pkt[codeword_start+i] ^ _PYNGHAM_CCSDS_POLY[i]
+        
+        return pkt
 
     def encode(self, pl, flags=0):
         """
@@ -204,10 +212,11 @@ class PyNGHam:
         # Insert parity data
         pkt = pkt + self._rsc[size_nr].encode(pkt[codeword_start:])
 
-        # Scramble
+        """ # Scramble
 
         for i in range(_PYNGHAM_PL_PAR_SIZES[size_nr]):
-            pkt[codeword_start+i] = pkt[codeword_start+i] ^ _PYNGHAM_CCSDS_POLY[i]
+            pkt[codeword_start+i] = pkt[codeword_start+i] ^ _PYNGHAM_CCSDS_POLY[i] """
+        pkt=self.scramble_packet(pkt, codeword_start, size_nr)
 
         return pkt
 
