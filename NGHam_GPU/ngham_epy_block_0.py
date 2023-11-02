@@ -7,7 +7,7 @@ be the parameters. All of them are required to have default values!
 """
 
 import sys
-sys.path.append('/home/jpv/proy/GNUradio/NGHam_GPU')
+sys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam_GPU')
 
 import numpy as np
 from gnuradio import gr
@@ -17,18 +17,9 @@ from rs import RS
 from enum import Enum
 from crc import Calculator, Configuration
 from pyngham import PyNGHam
-import time
 import cProfile
 import pstats
-
-from datetime import datetime
-
-# Obtén la fecha y hora actual
-now = datetime.now()
-fecha_hora = now.strftime("%Y%m%d_%H%M%S")
-
-# Crea el nombre del archivo con la fecha y hora
-nombre_archivo = f"NGHAM-GPU_Results_{fecha_hora}.txt"
+import json
 
 x = PyNGHam()
 
@@ -46,62 +37,39 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.handle_msg()
 
     def handle_msg(self):
+        counter=0
+        packet_pairs = []
         with cProfile.Profile() as profile:
-            path=os.getcwd()+"/20180512_231422z_436500000_43468_packets.log"
-            print(path)
+            path=os.getcwd()+"/packets/3_packets.log"
+            print("[INFO] Codificando los mensajes del archivo:" + path)
             with open(path, "rb") as f:
                 for msg in f:
-                    """ print("-------------Original Message-----------")
-                    print(msg) """
-                    #start_time = time.time()
+                    counter += 1
 
                     msg1=msg[0:220]
                     msg2=msg[220:]
 
                     pkt1 = x.encode(msg1)
                     pkt2 = x.encode(msg2)
-                    #end_time = time.time()
-                    """ print("-------------Chunk 1 Encoded msg-----------")
-                    print(pkt1)
-                    #pkt[30] = 5
-                    print("-------------Chunk 2 Encoded msg-----------")
-                    print(pkt1) """
-
-                    #print("-------------Chunk 1 Decoded msg-----------")
-                    #decoded_data1, errors1, errors_pos1 = x.decode(pkt1)
-
-                    """ print("Decoded data:", decoded_data1)
-                    print("Number of errors:", errors1)
-                    print("Errors positions:", errors_pos1) """
-
-                    #print("-------------Chunk 2 Decoded msg-----------")
-                    #decoded_data2, errors2, errors_pos2 = x.decode(pkt2)
-
-                    """ print("Decoded data:", decoded_data2)
-                    print("Number of errors:", errors2)
-                    print("Errors positions:", errors_pos2) """
-
-                    """ print("-------------Get Original Message-----------")
-                    byte_list = decoded_data1 + decoded_data2
-                    # Paso 2: Convertir la lista de enteros en una cadena de caracteres
-                    original_message = ''.join([chr(byte) for byte in byte_list])
-                    # Imprimir el mensaje original
-                    print(original_message)  """
-                    """ print("-----------Codification Time-----------------")
-                    elapsed_time = end_time - start_time
-                    print("Elapsed time: ", elapsed_time)  
-                    print("---------------------------------------------") """
-        
+                    packet_pairs.append((pkt1, pkt2))
         profile.disable()
 
-        with open(nombre_archivo, 'w') as f:
+        # Nombre del archivo con las estadisticas de codificación
+        carpeta_salida = "output_files"
+        NGHAM_Stats = f"{carpeta_salida}/NGHAM-GPU_EncodeStats_{counter}.txt"
+
+        with open(NGHAM_Stats, 'w') as f:
             # Redirige la salida al archivo
             stats = pstats.Stats(profile, stream=f)
             stats.sort_stats(pstats.SortKey.TIME)
             stats.print_stats()
-
-        # Cierra el archivo
         f.close()
-        print(f"Se ha creado el archivo {nombre_archivo}")
+        print(f"[INFO] Se ha creado el archivo {NGHAM_Stats} con las estadisticas de codificación")
 
-
+        # Nombre del archivo con los mensajes codificados
+        NGHAM_Cod = f"{carpeta_salida}/NGHAM_Pkts_{counter}.json"
+        json_data = json.dumps(packet_pairs, default=lambda x: int(x))
+        with open(NGHAM_Cod, "w") as file:
+            file.write(json_data)
+        file.close()
+        print(f"[INFO] Se ha creado el archivo {NGHAM_Cod}  con los mensajes codificados")
