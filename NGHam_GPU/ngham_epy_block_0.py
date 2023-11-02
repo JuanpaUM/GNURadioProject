@@ -40,7 +40,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         counter=0
         packet_pairs = []
         with cProfile.Profile() as profile:
-            path=os.getcwd()+"/packets/1002_packets.log"
+            path=os.getcwd()+"/packets/5002_packets.log"
             print("[INFO] Codificando los mensajes del archivo:" + path)
             with open(path, "rb") as f:
                 for msg in f:
