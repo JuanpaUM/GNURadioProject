@@ -37,10 +37,13 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         self.handle_msg()
 
     def handle_msg(self):
+        # Carpeta de Salida de los archivos
+        carpeta_salida = "output_files/New"
         counter=0
-        packet_pairs = []
+        packet_1 = []
+        packet_2 = []
         with cProfile.Profile() as profile:
-            path=os.getcwd()+"/packets/5002_packets.log"
+            path=os.getcwd()+"/packets/3_packets.log"
             print("[INFO] Codificando los mensajes del archivo:" + path)
             with open(path, "rb") as f:
                 for msg in f:
@@ -48,28 +51,39 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
 
                     msg1=msg[0:220]
                     msg2=msg[220:]
-
                     pkt1 = x.encode(msg1)
                     pkt2 = x.encode(msg2)
-                    packet_pairs.append((pkt1, pkt2))
-        profile.disable()
+                    packet_1.append(pkt1) 
+                    packet_2.append(pkt2)
 
-        # Nombre del archivo con las estadisticas de codificación
-        carpeta_salida = "output_files"
+            f.close()
+            pkt1_res=x.scramble_packet(packet_1,counter)
+            pkt2_res=x.scramble_packet(packet_2,counter)
+            profile.disable()
+
+        # Archivo con los mensajes codificados
+        packet_pairs = []
+        if pkt1_res.shape[0] == pkt2_res.shape[0]:
+            num_filas = pkt1_res.shape[0]
+            # Combinar las filas en pares
+            for i in range(num_filas):
+                pkt1_row = pkt1_res[i, :].tolist()
+                pkt2_row = pkt2_res[i, :].tolist()
+                packet_pair = (pkt1_row, pkt2_row)
+                packet_pairs.append(packet_pair)
+        else:
+            print("Las matrices tienen un número diferente de filas.") 
+        # Guardar los datos en un archivo JSON
+        NGHAM_Cod = f"{carpeta_salida}/NGHAM_Pkts_{counter}.json"
+        with open(NGHAM_Cod, "w") as file:
+            json.dump(packet_pairs, file) 
+        print(f"[INFO] Se ha creado el archivo {NGHAM_Cod} con los mensajes codificados")
+
+        # Archivo con las estadisticas de codificación
         NGHAM_Stats = f"{carpeta_salida}/NGHAM-GPU_EncodeStats_{counter}.txt"
-
         with open(NGHAM_Stats, 'w') as f:
-            # Redirige la salida al archivo
             stats = pstats.Stats(profile, stream=f)
             stats.sort_stats(pstats.SortKey.TIME)
             stats.print_stats()
         f.close()
         print(f"[INFO] Se ha creado el archivo {NGHAM_Stats} con las estadisticas de codificación")
-
-        # Nombre del archivo con los mensajes codificados
-        NGHAM_Cod = f"{carpeta_salida}/NGHAM_Pkts_{counter}.json"
-        json_data = json.dumps(packet_pairs, default=lambda x: int(x))
-        with open(NGHAM_Cod, "w") as file:
-            file.write(json_data)
-        file.close()
-        print(f"[INFO] Se ha creado el archivo {NGHAM_Cod}  con los mensajes codificados")

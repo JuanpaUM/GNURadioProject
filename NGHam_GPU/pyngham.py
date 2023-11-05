@@ -8,18 +8,19 @@ from crc import Calculator, Configuration
 from rs import RS
 
 # Define el kernel CUDA
-cuda_code = f"""
-__global__ void scramble_kernel(unsigned char *pkt, int codeword_start, int size_nr, unsigned char *poly, int pl_par_sizes) {{
-    int idx = threadIdx.x + blockIdx.x * blockDim.x;
-    if (idx < pl_par_sizes) {{
-        pkt[codeword_start+idx] ^= poly[idx];
+kernel = f"""
+__global__ void scramble_kernel(unsigned char* matriz, unsigned char* listaX, int num_rows) {{
+    int tid = blockIdx.x * blockDim.x + threadIdx.x;
+    if (tid < num_rows) {{
+        for (int i = 11; i < 266; i++) {{
+            matriz[tid * 266 + i] ^= listaX[i - 11];
+        }}
     }}
 }}
 """
-
+        
 # Compila el kernel CUDA
-mod = SourceModule(cuda_code)
-
+mod = SourceModule(kernel)
 # Obtiene el kernel compilado
 scramble_kernel = mod.get_function("scramble_kernel")
 
@@ -133,8 +134,8 @@ class PyNGHam:
         self.poly_gpu = cuda.mem_alloc(poly_np.nbytes)
         cuda.memcpy_htod(self.poly_gpu, poly_np)
         
-        self.pkt = np.zeros(266, dtype=np.uint8)
-        self.pkt_gpu = cuda.mem_alloc(self.pkt.nbytes)
+        #self.pkt = np.zeros(266, dtype=np.uint8)
+        #self.pkt_gpu = cuda.mem_alloc(self.pkt.nbytes)
 
     def __str__(self):
         """
@@ -176,31 +177,23 @@ class PyNGHam:
 
         return True
     
-    def scramble_packet(self, pkt, codeword_start, size_nr):
+    def scramble_packet(self, pkt,counter):
 
-        # Convierte pkt en arreglo de NumPy
         pkt_np = np.array(pkt, dtype=np.uint8)
+        pkt_gpu = cuda.mem_alloc(pkt_np.nbytes)
+        cuda.memcpy_htod(pkt_gpu, pkt_np)
 
-        # Copia los arreglos a la GPU
-        cuda.memcpy_htod(self.pkt_gpu, pkt_np)
+        blockSize = 256
+        blockDim  = (blockSize, 1, 1)
+        grid_size = (counter + blockSize - 1) // blockSize
+        gridDim   = (grid_size + 1, 1, 1)
+        
+        scramble_kernel(pkt_gpu, self.poly_gpu, np.int32(counter), block=blockDim ,grid=gridDim)
 
-        # Obtiene el valor de _PYNGHAM_PL_PAR_SIZES
-        pl_par_sizes = _PYNGHAM_PL_PAR_SIZES[size_nr]
-
-        # Define el número de hilos por bloque y bloques por cuadrícula
-        block_size = 256
-        grid_size = (pl_par_sizes + block_size - 1) // block_size
-
-        # Llama al kernel CUDA
-        scramble_kernel(self.pkt_gpu, np.int32(codeword_start), np.int32(size_nr), self.poly_gpu, np.int32(pl_par_sizes), block=(block_size, 1, 1))
-
-        # Copia los resultados de vuelta a la CPU
-        cuda.memcpy_dtoh(pkt_np, self.pkt_gpu)
-
-        # Actualiza pkt con los resultados
+        cuda.memcpy_dtoh(pkt_np, pkt_gpu)
         pkt = list(pkt_np)
 
-        return pkt
+        return pkt_np
 
     def encode(self, pl, flags=0):
         """
@@ -261,7 +254,6 @@ class PyNGHam:
         # # Scramble
         # for i in range(_PYNGHAM_PL_PAR_SIZES[size_nr]):
         #     pkt[codeword_start+i] = pkt[codeword_start+i] ^ _PYNGHAM_CCSDS_POLY[i]
-        pkt = self.scramble_packet(pkt, codeword_start, size_nr)
         
         return pkt
 
