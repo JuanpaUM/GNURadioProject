@@ -6,9 +6,6 @@ to get ports and parameters of your block. The arguments to __init__  will
 be the parameters. All of them are required to have default values!
 """
 
-import sys
-sys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam_GPU')
-
 import numpy as np
 from gnuradio import gr
 import os
@@ -16,7 +13,7 @@ from enum import Enum
 from rs import RS
 from enum import Enum
 from crc import Calculator, Configuration
-from pyngham import PyNGHam
+from pyngham_gpu import PyNGHam
 import cProfile
 import pstats
 import json
@@ -30,7 +27,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         """arguments to this function show up as parameters in GRC"""
         gr.sync_block.__init__(
             self,
-            name='NGHam',   # will show up in GRC
+            name='NGHam_Encode_GPU',   # will show up in GRC
             in_sig=None,
             out_sig=None
         )
@@ -38,12 +35,12 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
 
     def handle_msg(self):
         # Carpeta de Salida de los archivos
-        carpeta_salida = "output_files/New"
+        carpeta_salida = "output_files/"
         counter=0
         packet_1 = []
         packet_2 = []
         with cProfile.Profile() as profile:
-            path=os.getcwd()+"/packets/3_packets.log"
+            path=os.getcwd()+"/packets/50002_packets.log"
             print("[INFO] Codificando los mensajes del archivo:" + path)
             with open(path, "rb") as f:
                 for msg in f:

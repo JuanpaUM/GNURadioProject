@@ -6,9 +6,6 @@ to get ports and parameters of your block. The arguments to __init__  will
 be the parameters. All of them are required to have default values!
 """
 
-import sys
-sys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam')
-
 import numpy as np
 from gnuradio import gr
 import os
@@ -30,18 +27,18 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         """arguments to this function show up as parameters in GRC"""
         gr.sync_block.__init__(
             self,
-            name='NGHam',   # will show up in GRC
+            name='NGHam_Encode',   # will show up in GRC
             in_sig=None,
             out_sig=None
         )
         self.handle_msg()
 
     def handle_msg(self):
-        carpeta_salida = "output_files/New"
+        carpeta_salida = os.getcwd()+"/output_files/"
         counter=0
         packet_pairs = []
         with cProfile.Profile() as profile:
-            path=os.getcwd()+"/packets/3_packets.log"
+            path=os.getcwd()+"/packets/50002_packets.log"
             print("[INFO] Codificando los mensajes del archivo:" + path)
             with open(path, "rb") as f:
                 for msg in f:
@@ -57,7 +54,7 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
             profile.disable()
 
         # Archivo con los mensajes codificados
-        NGHAM_Cod = f"{carpeta_salida}/NGHAM_Pkts_{counter}.json"
+        NGHAM_Cod = f"{carpeta_salida}/NGHAM_GPU_Pkts_{counter}.json"
         json_data = json.dumps(packet_pairs, default=lambda x: int(x))
         with open(NGHAM_Cod, "w") as file:
             file.write(json_data)
