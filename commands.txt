@@ -1,0 +1,9 @@
+### Setting up CUDA Environment for NVIDIA GPU Development ###
+
+export CUDA_HOME=/usr/local/cuda-10.2
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/cuda-10.2/lib64
+export PATH=$PATH:$CUDA_HOME/bin
+
+### Compiling scrambler.cpp to Create Shared Library between C++ and Python with Pybind11 ###
+
+c++ -O3 -Wall -shared -std=c++11 -fPIC `python3 -m pybind11 --includes` scrambler.cpp -o scrambler`python3-config --extension-suffix`
