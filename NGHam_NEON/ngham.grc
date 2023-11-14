@@ -1,0 +1,101 @@
+options:
+  parameters:
+    author: ''
+    catch_exceptions: 'True'
+    category: '[GRC Hier Blocks]'
+    cmake_opt: ''
+    comment: ''
+    copyright: ''
+    description: ''
+    gen_cmake: 'On'
+    gen_linking: dynamic
+    generate_options: no_gui
+    hier_block_src_path: '.:'
+    id: ngham
+    max_nouts: '0'
+    output_language: python
+    placement: (0,0)
+    qt_qss_theme: ''
+    realtime_scheduling: ''
+    run: 'True'
+    run_command: '{python} -u {filename}'
+    run_options: prompt
+    sizing_mode: fixed
+    thread_safe_setters: ''
+    title: Not titled yet
+    window_size: (1000,1000)
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [8, 8]
+    rotation: 0
+    state: enabled
+
+blocks:
+- name: samp_rate
+  id: variable
+  parameters:
+    comment: ''
+    value: '32000'
+  states:
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [184, 12]
+    rotation: 0
+    state: enabled
+- name: epy_block_0
+  id: epy_block
+  parameters:
+    _source_code: "\"\"\"\nEmbedded Python Blocks:\n\nEach time this file is saved,\
+      \ GRC will instantiate the first class it finds\nto get ports and parameters\
+      \ of your block. The arguments to __init__  will\nbe the parameters. All of\
+      \ them are required to have default values!\n\"\"\"\n\nimport sys\nsys.path.append('/home/jpv/proy/ProyGit/GNURadioProject/NGHam')\n\
+      \nimport numpy as np\nfrom gnuradio import gr\nimport os\nfrom enum import Enum\n\
+      from rs import RS\nfrom enum import Enum\nfrom crc import Calculator, Configuration\n\
+      from pyngham import PyNGHam\nimport cProfile\nimport pstats\nimport json\n\n\
+      x = PyNGHam()\n\nclass blk(gr.sync_block):  # other base classes are basic_block,\
+      \ decim_block, interp_block\n    \"\"\"Embedded Python Block example - a simple\
+      \ multiply const\"\"\"\n\n    def __init__(self):  # only default arguments\
+      \ here\n        \"\"\"arguments to this function show up as parameters in GRC\"\
+      \"\"\n        gr.sync_block.__init__(\n            self,\n            name='NGHam_Encode',\
+      \   # will show up in GRC\n            in_sig=None,\n            out_sig=None\n\
+      \        )\n        self.handle_msg()\n\n    def handle_msg(self):\n       \
+      \ carpeta_salida = os.getcwd()+\"/proy/ProyGit/GNURadioProject/NGHam/output_files/\"\
+      \n        counter=0\n        packet_pairs = []\n        with cProfile.Profile()\
+      \ as profile:\n            path=os.getcwd()+\"/proy/ProyGit/GNURadioProject/NGHam/packets/3_packets.log\"\
+      \n            print(\"[INFO] Codificando los mensajes del archivo:\" + path)\n\
+      \            with open(path, \"rb\") as f:\n                for msg in f:\n\
+      \                    counter += 1\n\n                    msg1=msg[0:220]\n \
+      \                   msg2=msg[220:]\n\n                    pkt1 = x.encode(msg1)\n\
+      \                    pkt2 = x.encode(msg2)\n                    packet_pairs.append((pkt1,\
+      \ pkt2))\n            f.close()\n            profile.disable()\n\n        #\
+      \ Archivo con los mensajes codificados\n        NGHAM_Cod = f\"{carpeta_salida}/NGHAM_Pkts_{counter}.json\"\
+      \n        json_data = json.dumps(packet_pairs, default=lambda x: int(x))\n \
+      \       with open(NGHAM_Cod, \"w\") as file:\n            file.write(json_data)\n\
+      \        file.close()\n        print(f\"[INFO] Se ha creado el archivo {NGHAM_Cod}\
+      \  con los mensajes codificados\")\n\n        # Archivo con las estadisticas\
+      \ de codificaci\xF3n\n        NGHAM_Stats = f\"{carpeta_salida}/NGHAM_EncodeStats_{counter}.txt\"\
+      \n        with open(NGHAM_Stats, 'w') as f:\n            stats = pstats.Stats(profile,\
+      \ stream=f)\n            stats.sort_stats(pstats.SortKey.TIME)\n           \
+      \ stats.print_stats()\n        f.close()\n        print(f\"[INFO] Se ha creado\
+      \ el archivo {NGHAM_Stats} con las estadisticas de codificaci\xF3n\")  "
+    affinity: ''
+    alias: ''
+    comment: ''
+    maxoutbuf: '0'
+    minoutbuf: '0'
+  states:
+    _io_cache: ('NGHam_Encode', 'blk', [], [], [], 'Embedded Python Block example
+      - a simple multiply const', [])
+    bus_sink: false
+    bus_source: false
+    bus_structure: null
+    coordinate: [512, 228.0]
+    rotation: 0
+    state: true
+connections: []
+
+metadata:
+  file_format: 1
