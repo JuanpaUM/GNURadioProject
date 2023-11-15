@@ -1,0 +1,1 @@
+PREFERRED_VERSION_python3-crc = "5.0.0"
