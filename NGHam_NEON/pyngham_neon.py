@@ -110,6 +110,8 @@ class PyNGHam:
         self._rsc.append(RS(8, 0x187, 112, 11, 32, _PYNGHAM_PL_PAR_SIZES[-1] - _PYNGHAM_PL_PAR_SIZES[5]))
         self._rsc.append(RS(8, 0x187, 112, 11, 32, _PYNGHAM_PL_PAR_SIZES[-1] - _PYNGHAM_PL_PAR_SIZES[6]))
 
+        self.poly = np.asarray(_PYNGHAM_CCSDS_POLY, dtype=np.uint8)
+
     def __str__(self):
         """
         Represents the class as a string.
@@ -149,6 +151,13 @@ class PyNGHam:
             diff = diff >> 1
 
         return True
+    
+    def scramble_packet(self, pkt):
+
+        pkt_neon= scrambler.scramble_packet_neon(pkt,self.poly)
+        pkt = list(pkt_neon)
+        
+        return pkt
     
     def encode(self, pl, flags=0):
         """
@@ -208,10 +217,8 @@ class PyNGHam:
 
         # Scramble
         pkt = np.asarray(pkt, dtype=np.uint8)
-        poly = np.asarray(_PYNGHAM_CCSDS_POLY, dtype=np.uint8)
-
-        pkt_neon= scrambler.scramble_packet_neon(pkt,poly)
-        pkt = list(pkt_neon)
+        
+        pkt=self.scramble_packet(pkt)
         
         return pkt
 

@@ -39,8 +39,11 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
         patron= f"/input_files/NGHAM_Pkts_{lines}.json" 
         Orig_Msgs = f"{carpeta_salida}/Orig_Msgs_{lines}.log"    
             #msjs codificados por GPU
-        patron= f"/input_files/NGHAM_GPU_Pkts_{lines}.json" 
-        Orig_Msgs = f"{carpeta_salida}/Orig_Msgs_GPU_{lines}.log"
+        #patron= f"/input_files/NGHAM_GPU_Pkts_{lines}.json" 
+        #Orig_Msgs = f"{carpeta_salida}/Orig_Msgs_GPU_{lines}.log"
+            #msjs codificados por GPU
+        #patron= f"/input_files/NGHAM_NEON_Pkts_{lines}.json" 
+        #Orig_Msgs = f"{carpeta_salida}/Orig_Msgs_NEON_{lines}.log"
 
         path = os.getcwd() + patron
         print(path)
@@ -63,7 +66,6 @@ class blk(gr.sync_block):  # other base classes are basic_block, decim_block, in
 
         # Cierra el archivo
         file.close()
-
         
         with open(Orig_Msgs, "w") as file:
             for msg in original_msgs:

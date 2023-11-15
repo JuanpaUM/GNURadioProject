@@ -13,7 +13,7 @@ from enum import Enum
 from rs import RS
 from enum import Enum
 from crc import Calculator, Configuration
-from pyngham_NEON import PyNGHam
+from pyngham_neon import PyNGHam
 import cProfile
 import pstats
 import json
